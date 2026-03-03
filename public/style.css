@@ -126,10 +126,10 @@
     .nav-menu {
         display: none;
         position: fixed;
-        top: 64px;
+        top: 52px;
         left: 0;
         width: 100%;
-        max-height: calc(100vh - 64px);
+        max-height: calc(100vh - 52px);
         background: var(--base-black);
         flex-direction: column;
         gap: 0;
@@ -159,13 +159,11 @@
     }
 
     .nav-link {
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--gray-2);
+        padding: 10px 16px;
         width: 100%;
         text-align: left;
         border: none;
-        padding: 14px 20px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     .nav-link:hover,
@@ -180,14 +178,14 @@
     }
 
     .nav-container {
-        height: 64px;
-        gap: 12px;
+        height: 52px;
+        gap: 8px;
     }
 
     .logo-img {
-        height: 36px;
-        padding: 4px;
-        margin-right: 6px;
+        height: 28px;
+        padding: 3px;
+        margin-right: 4px;
     }
 
     .hero {
