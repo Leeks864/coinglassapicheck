@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESFX Trader · Bazar Paneli</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="main.html" class="logo" aria-label="ESFX Trader">
+                <img src="esfx.jpeg" alt="ESFX Logo" class="logo-img">
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="main.html" class="nav-link">Ana Səhifə</a></li>
+                <li><a href="market.html" class="nav-link active">Bazar</a></li>
+                <li><a href="news.html" class="nav-link">Xəbərlər</a></li>
+                <li><a href="videos.html" class="nav-link">Videolar</a></li>
+                <li><a href="partners.html" class="nav-link">Tərəfdaşlar</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Menyu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-copy">
+                    <p class="eyebrow">Canlı Bazar Göstəriciləri</p>
+                    <h1>Kripto Bazarı Hazırda</h1>
+                    <p class="hero-sub">Long/Short nisbətləri, ETF axınları, likvidasiya və top kriptolar - hamısı bir yerdə.</p>
+                </div>
+            </div>
+        </section>
+        <section class="long-short-section">
+            <div class="container">
+                <div class="section-head">
+                    <div>
+                        <h2>Long/Short Nisbəti</h2>
+                    </div>
+                </div>
+                <div id="longShortData" class="stats-grid"></div>
+            </div>
+        </section>
+
+        <section class="etf-flows-section">
+            <div class="container">
+                <div class="section-head">
+                    <div>
+                        <h2>ETF Axını Tarixçəsi</h2>
+                        <p class="section-sub">Spot Bitcoin və Ethereum ETF axınları</p>
+                    </div>
+                </div>
+                <div id="etfFlowsData" class="flow-grid"></div>
+            </div>
+        </section>
+
+        <section class="liquidation-section">
+            <div class="container">
+                <div class="section-head">
+                    <div>
+                        <h2>Likvidasiya Tarixçəsi</h2>
+                        <p class="section-sub">24 saatlıq likvidasiya hadisələri</p>
+                    </div>
+                </div>
+                <div id="liquidationData" class="liquidation-grid"></div>
+            </div>
+        </section>
+
+        <section class="grayscale-section">
+            <div class="container">
+                <div class="section-head">
+                    <div>
+                        <h2>Grayscale Holdings</h2>
+                        <p class="section-sub">Grayscale kriptovalyutaları fon şəklində idarə edən və investorların ənənəvi bazarlar vasitəsi ilə kriptoya yatırım etməsini təmin edən şirkətdir.</p>
+                    </div>
+                </div>
+                <div id="grayscaleData" class="grayscale-grid"></div>
+            </div>
+        </section>
+
+        <section class="top-coins-section">
+            <div class="container">
+                <div class="section-head">
+                    <div>
+                        <h2>Top 10 Kriptolar</h2>
+                        <p class="section-sub">Ən böyük market kapitalizasiyaya malik kriptolar</p>
+                    </div>
+                </div>
+                <div id="topCoinsContainer" class="top-coins-table-wrapper">
+                    <table class="top-coins-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Coin</th>
+                                <th>Price (USD)</th>
+                                <th>24h Change</th>
+                                <th>Market Cap</th>
+                                <th>24h Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topCoinsData"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-social">
+                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <img src="/youtube-icon.svg" alt="YouTube">
+                </a>
+                <a href="https://t.me" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                    <img src="/telegram-icon.svg" alt="Telegram">
+                </a>
+            </div>
+            <p class="footer-info">© 2026 ESFX · Kripto ticarətçiləri üçün etibarlı məlumat platforması</p>
+            <p class="footer-disclaimer">Burada paylaşılan bütün məlumatlar sadəcə tədris və informasiya məqsədi ilə paylaşılmışdır. Heç biri investisiya tövsiyəsi deyil. Kriptovalyuta ticarəti yüksək risklidir. Öz araşdırmanızı edin.</p>
+        </div>
+    </footer>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+        hamburger.addEventListener('click', () => {
+            const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', String(!expanded));
+            navMenu.classList.toggle('open');
+        });
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.forEach(item => item.classList.remove('active'));
+                link.classList.add('active');
+                navMenu.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        // Load all data when page loads
+        window.addEventListener('load', () => {
+            fetchLongShortRatios();
+            fetchBTCETFFlows();
+            fetchGrayscaleHoldings();
+            fetchLiquidationHistory();
+            fetchTopCoins();
+            fetchMarketIndicators();
+        });
+
+        async function fetchLongShortRatios() {
+            const url = '/api/proxy/long-short';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayLongShortRatios(data.data || data);
+            } catch (error) {
+                console.error('Long-Short Ratio fetch error:', error);
+                document.getElementById('longShortData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
+            }
+        }
+
+        function displayLongShortRatios(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                document.getElementById('longShortData').innerHTML = '<div class="error-message">Məlumat tapılmadı</div>';
+                return;
+            }
+
+            const latest = data[data.length - 1];
+            const history = data.slice(-6).reverse();
+            
+            let html = `
+                <div class="ratio-cards">
+                    <div class="ratio-card">
+                        <div class="ratio-label">Long Ratio</div>
+                        <div class="ratio-value positive">${latest.global_account_long_percent?.toFixed(2) || 'N/A'}%</div>
+                        <div class="ratio-bar">
+                            <div class="ratio-fill long" style="width: ${latest.global_account_long_percent || 0}%"></div>
+                        </div>
+                    </div>
+                    <div class="ratio-card">
+                        <div class="ratio-label">Short Ratio</div>
+                        <div class="ratio-value negative">${latest.global_account_short_percent?.toFixed(2) || 'N/A'}%</div>
+                        <div class="ratio-bar">
+                            <div class="ratio-fill short" style="width: ${latest.global_account_short_percent || 0}%"></div>
+                        </div>
+                    </div>
+                    <div class="ratio-card">
+                        <div class="ratio-label">L/S Ratio</div>
+                        <div class="ratio-value">${latest.global_account_long_short_ratio?.toFixed(2) || 'N/A'}</div>
+                    </div>
+                </div>
+                <div class="ratio-history">
+                    <h4>Son 6 Saat</h4>
+                    <div class="history-grid">`;
+            
+            history.forEach(item => {
+                const longPercent = item.global_account_long_percent || 0;
+                const shortPercent = 100 - longPercent;
+                const time = new Date(item.time).toLocaleTimeString('az-AZ', {hour: '2-digit', minute: '2-digit'});
+                
+                html += `
+                    <div class="history-item">
+                        <div class="time">${time}</div>
+                        <div class="history-bar-container">
+                            <div class="history-bar">
+                                <div class="history-bar-long" style="flex: ${longPercent};" title="Long: ${longPercent.toFixed(1)}%"></div>
+                                <div class="history-bar-short" style="flex: ${shortPercent};" title="Short: ${shortPercent.toFixed(1)}%"></div>
+                            </div>
+                        </div>
+                        <div class="history-ratio">${longPercent.toFixed(1)}%</div>
+                    </div>`;
+            });
+            
+            html += `</div></div>`;
+            document.getElementById('longShortData').innerHTML = html;
+        }
+
+        async function fetchBTCETFFlows() {
+            const url = '/api/proxy/btc-etf-flow';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayBTCETFFlows(data);
+            } catch (error) {
+                console.error('BTC ETF flow fetch error:', error);
+                document.getElementById('etfFlowsData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
+            }
+        }
+
+        function displayBTCETFFlows(data) {
+            if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+                document.getElementById('etfFlowsData').innerHTML = '<div class="error-message">Məlumat tapılmadı</div>';
+                return;
+            }
+
+            const flows = data.data;
+            const summary = data.summary || {};
+            
+            let html = `
+                <div class="etf-summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-label">7 Günlük Toplam Axın</div>
+                        <div class="summary-value ${summary.total_7d_flow >= 0 ? 'positive' : 'negative'}">
+                            $${(summary.total_7d_flow / 1000000).toFixed(1)}M
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Son Axın</div>
+                        <div class="summary-value ${summary.last_flow >= 0 ? 'positive' : 'negative'}">
+                            $${(summary.last_flow / 1000000).toFixed(1)}M
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">BTC Qiyməti</div>
+                        <div class="summary-value">$${summary.current_price?.toLocaleString('en-US', {maximumFractionDigits: 2}) || 'N/A'}</div>
+                    </div>
+                </div>
+                <div class="etf-flows-list">
+                    <h3>Son 7 Gün Axınları</h3>
+                    <div class="flows-timeline">`;
+            
+            flows.forEach((flow, idx) => {
+                const isPositive = flow.flow_usd >= 0;
+                const flowAmount = (flow.flow_usd / 1000000).toFixed(1);
+                
+                html += `
+                    <div class="flow-item ${isPositive ? 'inflow' : 'outflow'}">
+                        <div class="flow-date">${flow.date}</div>
+                        <div class="flow-data">
+                            <div class="flow-amount ${isPositive ? 'positive' : 'negative'}">
+                                ${isPositive ? '+' : ''}$${flowAmount}M
+                            </div>
+                            <div class="flow-price">$${flow.price_usd?.toLocaleString('en-US', {maximumFractionDigits: 2})}</div>
+                        </div>`;
+                
+                if (flow.major_etfs && flow.major_etfs.length > 0) {
+                    html += `<div class="major-etfs">`;
+                    flow.major_etfs.forEach(etf => {
+                        const etfFlow = (etf.flow / 1000000).toFixed(1);
+                        html += `
+                            <div class="etf-badge" title="Ticker: ${etf.ticker}">
+                                <span class="etf-ticker">${etf.ticker}</span>
+                                <span class="etf-flow ${etf.flow >= 0 ? 'positive' : 'negative'}">
+                                    ${etf.flow >= 0 ? '+' : ''}$${etfFlow}M
+                                </span>
+                            </div>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `</div>`;
+            });
+            
+            html += `</div></div>`;
+            document.getElementById('etfFlowsData').innerHTML = html;
+        }
+
+        async function fetchGrayscaleHoldings() {
+            const url = '/api/proxy/grayscale-holdings';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayGrayscaleHoldings(data.data || []);
+            } catch (error) {
+                console.error('Grayscale holdings fetch error:', error);
+                document.getElementById('grayscaleTableBody').innerHTML = `<tr><td colspan="4" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
+            }
+        }
+
+        function displayGrayscaleHoldings(holdings) {
+            if (!Array.isArray(holdings) || holdings.length === 0) {
+                document.getElementById('grayscaleTableBody').innerHTML = '<tr><td colspan="4" class="error-message">Məlumat tapılmadı</td></tr>';
+                return;
+            }
+
+            let html = '';
+            holdings.forEach(holding => {
+                const premiumClass = holding.premium_rate >= 0 ? 'positive' : 'negative';
+                const holdingsHtml = `
+                    <tr>
+                        <td class="holding-symbol">
+                            <strong>${holding.symbol}</strong>
+                        </td>
+                        <td class="holding-value">
+                            $${(holding.holdings_usd / 1000000).toFixed(1)}M
+                        </td>
+                        <td class="holding-premium ${premiumClass}">
+                            ${holding.premium_rate >= 0 ? '+' : ''}${holding.premium_rate.toFixed(2)}%
+                        </td>
+                        <td class="holding-change">
+                            <div class="change-badges">
+                                <span class="change-badge" title="1D Change">${holding.change_1d.toFixed(0)} (1D)</span>
+                                <span class="change-badge" title="7D Change">${holding.change_7d.toFixed(0)} (7D)</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                html += holdingsHtml;
+            });
+            
+            document.getElementById('grayscaleTableBody').innerHTML = html;
+        }
+
+        async function fetchLiquidationHistory() {
+            const url = '/api/proxy/liquidation-history';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayLiquidationHistory(data);
+            } catch (error) {
+                console.error('Liquidation history fetch error:', error);
+                document.getElementById('liquidationData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
+            }
+        }
+
+        function displayLiquidationHistory(data) {
+            if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+                document.getElementById('liquidationData').innerHTML = '<div class="error-message">Məlumat tapılmadı</div>';
+                return;
+            }
+
+            const liquidations = data.data;
+            const summary = data.summary || {};
+            const maxValue = Math.max(
+                ...liquidations.map(l => Math.max(l.long_usd, l.short_usd))
+            );
+
+            let html = `
+                <div class="liquidation-summary-cards">
+                    <div class="liq-card long-card">
+                        <div class="liq-label">7D Long Liquidations</div>
+                        <div class="liq-value">$${(summary.total_7d_long / 1000000).toFixed(1)}M</div>
+                    </div>
+                    <div class="liq-card short-card">
+                        <div class="liq-label">7D Short Liquidations</div>
+                        <div class="liq-value">$${(summary.total_7d_short / 1000000).toFixed(1)}M</div>
+                    </div>
+                    <div class="liq-card total-card">
+                        <div class="liq-label">Total 7D Liquidations</div>
+                        <div class="liq-value">$${(summary.total_7d_liquidation / 1000000).toFixed(1)}M</div>
+                    </div>
+                </div>
+                <div class="liquidation-chart">
+                    <h3>Last 7 Days Liquidation Volume</h3>
+                    <div class="liq-bars">`;
+
+            liquidations.forEach(liq => {
+                const longPercent = (liq.long_usd / maxValue) * 100;
+                const shortPercent = (liq.short_usd / maxValue) * 100;
+                
+                html += `
+                    <div class="liq-bar-group">
+                        <div class="liq-date">${liq.date}</div>
+                        <div class="liq-bar-container">
+                            <div class="liq-bar long-bar" style="width: ${longPercent}%" title="Long: $${(liq.long_usd / 1000000).toFixed(1)}M"></div>
+                            <div class="liq-bar short-bar" style="width: ${shortPercent}%" title="Short: $${(liq.short_usd / 1000000).toFixed(1)}M"></div>
+                        </div>
+                        <div class="liq-amounts">
+                            <span class="long-amount">$${(liq.long_usd / 1000000).toFixed(1)}M</span>
+                            <span class="short-amount">$${(liq.short_usd / 1000000).toFixed(1)}M</span>
+                        </div>
+                    </div>`;
+            });
+
+            html += `</div></div>`;
+            document.getElementById('liquidationData').innerHTML = html;
+        }
+
+        // Top Coins functions
+        async function fetchTopCoins() {
+            const url = '/api/proxy/top-coins';
+            
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayTopCoins(data);
+            } catch (error) {
+                console.error('Top coins fetch error:', error);
+                document.getElementById('topCoinsData').innerHTML = `<tr><td colspan="6" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
+            }
+        }
+
+        function displayTopCoins(data) {
+            if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+                document.getElementById('topCoinsData').innerHTML = '<tr><td colspan="6" class="error-message">Məlumat tapılmadı</td></tr>';
+                return;
+            }
+
+            const coins = data.data;
+            let html = '';
+
+            coins.forEach(coin => {
+                const changeClass = coin.change_24h >= 0 ? 'change-positive' : 'change-negative';
+                const changeSign = coin.change_24h >= 0 ? '+' : '';
+                const marketCapDisplay = coin.market_cap > 1000000000 
+                    ? `$${(coin.market_cap / 1000000000).toFixed(1)}B` 
+                    : `$${(coin.market_cap / 1000000).toFixed(1)}M`;
+                const volumeDisplay = coin.volume_24h > 1000000000 
+                    ? `$${(coin.volume_24h / 1000000000).toFixed(1)}B` 
+                    : `$${(coin.volume_24h / 1000000).toFixed(1)}M`;
+
+                html += `
+                    <tr>
+                        <td class="rank-cell">#${coin.rank}</td>
+                        <td class="coin-cell">
+                            ${coin.image ? `<img src="${coin.image}" alt="${coin.name}" class="coin-image">` : '<div class="coin-image"></div>'}
+                            <div>
+                                <div class="coin-symbol">${coin.symbol}</div>
+                                <div style="font-size: 0.85rem; color: var(--gray-3);">${coin.name}</div>
+                            </div>
+                        </td>
+                        <td class="price-cell">$${coin.price.toFixed(2)}</td>
+                        <td><span class="change-cell ${changeClass}">${changeSign}${coin.change_24h.toFixed(2)}%</span></td>
+                        <td class="market-cap-cell">${marketCapDisplay}</td>
+                        <td class="volume-cell">${volumeDisplay}</td>
+                    </tr>`;
+            });
+
+            document.getElementById('topCoinsData').innerHTML = html;
+        }
+
+        // Market Indicators functions
+        async function fetchMarketIndicators() {
+            const url = '/api/proxy/market-indicators';
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                const data = await response.json();
+                displayMarketIndicators(data.data || {});
+            } catch (error) {
+                console.error('Market indicators fetch error:', error);
+            }
+        }
+
+        function displayMarketIndicators(indicators) {
+            const indicators_list = [
+                { label: 'Bazar Kap.', value: indicators.total_market_cap, format: 'trillionUSD' },
+                { label: '24s Həcm', value: indicators.total_volume_24h, format: 'billionUSD' },
+                { label: 'Stabilcoin payı', value: indicators.stablecoin_percentage, format: 'percent' },
+                { label: 'Fondinq dərəcəsi', value: indicators.funding_rate, format: 'percent' },
+                { label: 'Likvidasiya (24s)', value: indicators.liquidations_24h, format: 'millionUSD' },
+                { label: 'Bitcoin dominansı', value: indicators.btc_dominance, format: 'percent' }
+            ];
+
+            let html = '';
+            indicators_list.forEach(ind => {
+                let formattedValue = '';
+                if (ind.format === 'trillionUSD') {
+                    formattedValue = '$' + (ind.value / 1000000000000).toFixed(2) + 'T';
+                } else if (ind.format === 'billionUSD') {
+                    formattedValue = '$' + (ind.value / 1000000000).toFixed(1) + 'B';
+                } else if (ind.format === 'millionUSD') {
+                    formattedValue = '$' + (ind.value / 1000000).toFixed(0) + 'M';
+                } else if (ind.format === 'percent') {
+                    formattedValue = ind.value.toFixed(2) + '%';
+                }
+
+                html += `
+                    <div class="indicator-card">
+                        <div class="indicator-label">${ind.label}</div>
+                        <div class="indicator-value">${formattedValue}</div>
+                    </div>`;
+            });
+
+            const container = document.getElementById('marketIndicators');
+            if (container) container.innerHTML = html;
+        }
+
+        // Grayscale Holdings functions
+        async function fetchGrayscaleHoldings() {
+            const url = '/api/proxy/grayscale-holdings';
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                const data = await response.json();
+                displayGrayscaleHoldings(data.data || []);
+            } catch (error) {
+                console.error('Grayscale holdings fetch error:', error);
+                document.getElementById('grayscaleData').innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align:center; padding:40px;">Məlumat yüklənə bilinmədi</div>';
+            }
+        }
+
+        function displayGrayscaleHoldings(holdings) {
+            let html = '';
+            
+            if (!holdings || holdings.length === 0) {
+                document.getElementById('grayscaleData').innerHTML = '<div style="color: rgba(255,255,255,0.5); text-align:center; padding:40px;">Məlumat yoxdur</div>';
+                return;
+            }
+
+            holdings.forEach(holding => {
+                const symbol = holding.symbol || 'Unknown';
+                const holdingsUsd = holding.holdings_usd || 0;
+                const premiumRate = holding.premium_rate || 0;
+                const primaryPrice = holding.primary_price || 0;
+                const change1d = holding.change_1d || 0;
+                
+                const displayAmount = (holdingsUsd / 1000000).toFixed(2);
+                const priceChange = change1d > 0 ? '+' : '';
+                const premiumDisplay = premiumRate > 0 ? `+${premiumRate.toFixed(2)}%` : `${premiumRate.toFixed(2)}%`;
+                
+                html += `
+                    <div class="grayscale-card">
+                        <div class="grayscale-name">Grayscale ${symbol} Trust</div>
+                        <div class="grayscale-asset">${symbol} Holdings</div>
+                        <div class="grayscale-amount">$${displayAmount}M</div>
+                        <div class="grayscale-label">Premium: <span style="color: ${premiumRate > 0 ? '#22c55e' : '#ef4444'}">${premiumDisplay}</span></div>
+                        <div class="grayscale-label">24h Change: <span style="color: ${change1d > 0 ? '#22c55e' : '#ef4444'}">${priceChange}$${(change1d / 1000000).toFixed(2)}M</span></div>
+                    </div>`;
+            });
+
+            document.getElementById('grayscaleData').innerHTML = html;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchGrayscaleHoldings();
+        });
+    </script>
+</body>
+</html>
