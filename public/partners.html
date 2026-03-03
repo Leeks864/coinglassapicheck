@@ -47,7 +47,7 @@
                     <div class="partner-simple-card">
                         <img src="bitget.png" alt="Bitget" class="partner-simple-logo">
                         <h3>Bitget</h3>
-                        <input type="text" class="referral-link-input" value="https://www.bitget.com/referral/register?ref=ESFXTRADER" id="bitget-ref" readonly>
+                        <input type="text" class="referral-link-input" value="https://partner.bitget.fit/bg/37UJQS" id="bitget-ref" readonly>
                         <button class="copy-btn" onclick="copyToClipboard('bitget-ref')">Kopyala</button>
                     </div>
 
@@ -55,7 +55,7 @@
                     <div class="partner-simple-card">
                         <img src="weex.png" alt="Weex" class="partner-simple-logo">
                         <h3>Weex</h3>
-                        <input type="text" class="referral-link-input" value="https://weex.cc/register?ref=ESFXTRADER" id="weex-ref" readonly>
+                        <input type="text" class="referral-link-input" value="https://weex.com/register?vipCode=aguj" id="weex-ref" readonly>
                         <button class="copy-btn" onclick="copyToClipboard('weex-ref')">Kopyala</button>
                     </div>
 
@@ -63,7 +63,7 @@
                     <div class="partner-simple-card">
                         <img src="mexc.png" alt="MEXC" class="partner-simple-logo">
                         <h3>MEXC</h3>
-                        <input type="text" class="referral-link-input" value="https://www.mexc.com/register?inviteCode=ESFXTRADER" id="mexc-ref" readonly>
+                        <input type="text" class="referral-link-input" value="https://www.mexc.com/acquisition/custom-sign-up?shareCode=mexc-2kVHP" id="mexc-ref" readonly>
                         <button class="copy-btn" onclick="copyToClipboard('mexc-ref')">Kopyala</button>
                     </div>
 
@@ -71,7 +71,7 @@
                     <div class="partner-simple-card">
                         <img src="xm.jpg" alt="XM Crypto" class="partner-simple-logo">
                         <h3>XM Crypto</h3>
-                        <input type="text" class="referral-link-input" value="https://xmcrypto.com/register?ref=ESFXTRADER" id="xm-ref" readonly>
+                        <input type="text" class="referral-link-input" value="-" id="xm-ref" readonly>
                         <button class="copy-btn" onclick="copyToClipboard('xm-ref')">Kopyala</button>
                     </div>
 
@@ -79,7 +79,7 @@
                     <div class="partner-simple-card">
                         <img src="okx.svg" alt="OKX" class="partner-simple-logo">
                         <h3>OKX</h3>
-                        <input type="text" class="referral-link-input" value="https://www.okx.com/join/ESFXTRADER" id="okx-ref" readonly>
+                        <input type="text" class="referral-link-input" value="https://okx.com/join/9450438" id="okx-ref" readonly>
                         <button class="copy-btn" onclick="copyToClipboard('okx-ref')">Kopyala</button>
                     </div>
                 </div>
@@ -122,6 +122,7 @@
         hamburger.addEventListener('click', () => {
             const expanded = hamburger.getAttribute('aria-expanded') === 'true';
             hamburger.setAttribute('aria-expanded', String(!expanded));
+            hamburger.classList.toggle('open');
             navMenu.classList.toggle('open');
         });
 

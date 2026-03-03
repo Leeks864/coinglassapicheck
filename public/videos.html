@@ -107,6 +107,7 @@
         hamburger.addEventListener('click', () => {
             const expanded = hamburger.getAttribute('aria-expanded') === 'true';
             hamburger.setAttribute('aria-expanded', String(!expanded));
+            hamburger.classList.toggle('open');
             navMenu.classList.toggle('open');
         });
 

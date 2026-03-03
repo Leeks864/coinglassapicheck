@@ -34,9 +34,9 @@
         <section class="hero" id="home">
             <div class="container">
                 <div class="hero-copy">
-                    <p class="eyebrow">Peşəkar Kripto Analitik Platforması</p>
-                    <h1>ESFX Trader ilə bazarı real vaxtda izləyin</h1>
-                    <p class="hero-sub">Qlobal trader sentiment göstəriciləri, ETF axınları, və canlı qiymətlərlə daha iydı qərar verin.</p>
+                    <p class="eyebrow">Peşəkar İnvestisiya Platforması</p>
+                    <h1>ESFX ilə bazarı real vaxtda izləyin</h1>
+                    <p class="hero-sub">Qlobal bazar göstəriciləri, ETF axınları, və canlı qiymətlərlə daha dəqiq qərar verin.</p>
                     <div class="hero-ctas">
                         <a href="https://t.me/esfxtrader" class="btn" target="_blank">Telegram Kanalımız</a>
                         <a href="partners.html" class="btn ghost">Tərəfdaşlarımız</a>
@@ -65,14 +65,13 @@
                     <div>
                         <p class="section-tag">Platforma xəritəsi</p>
                         <h2>Bütün funksiyaları ayrıca səhifələrdə kəşf edin</h2>
-                        <p class="section-sub">Hər bölmə tam ekran təcrübəsi üçün yeni səhifədə açılır.</p>
                     </div>
                 </div>
                 <div class="sections-grid">
                     <a class="section-card" href="market.html">
                         <span class="badge">Spot & Futures</span>
                         <h3>Bazar cədvəli</h3>
-                        <p>Qlobal statistika, real vaxt qiymətlər və Coinglass məlumatları.</p>
+                        <p>Qlobal statistika, real vaxt qiymətlər və Coinglass dataları.</p>
                     </a>
                     <a class="section-card" href="news.html">
                         <span class="badge">Xəbərlər</span>
@@ -81,13 +80,13 @@
                     </a>
                     <a class="section-card" href="videos.html">
                         <span class="badge">YouTube</span>
-                        <h3>Video brifinqlər</h3>
-                        <p>Makro icmallar, on-chain radar və DeFi dərsləri.</p>
+                        <h3>YouTube kanalımız</h3>
+                        <p>0-dan texniki analiz dərsləri, Canlı yayımlar və strategiyalar.</p>
                     </a>
                     <a class="section-card" href="partners.html">
                         <span class="badge">Ekosistem</span>
                         <h3>Tərəfdaşlarımız</h3>
-                        <p>Coinglass, TradingView və digər strateji partnyorlar.</p>
+                        <p>Əməkdaşlıq etdiyimiz birjalar</p>
                     </a>
                 </div>
             </div>
@@ -119,8 +118,8 @@
                     <img src="/telegram-icon.svg" alt="Telegram">
                 </a>
             </div>
-            <p class="footer-info">© 2026 ESFX Trader · Kripto ticarətçiləri üçün etibarlı məlumat platforması</p>
-            <p class="footer-disclaimer">Burada paylaşılan tüm məlumatlar yalnızca eğitim və informasyon məqsədi ilə verilmişdir. Heç biri yatırım məsləhəti deyil. Kriptovalyuta ticarəti yüksək risklidir - öz araşdırmanızı aparın.</p>
+            <p class="footer-info">© 2026 ESFX · Kripto ticarətçiləri üçün etibarlı məlumat platforması</p>
+            <p class="footer-disclaimer">Burada paylaşılan bütün məlumatlar sadəcə tədris və informasiya məqsədi ilə paylaşılmışdır. Heç biri investisiya tövsiyəsi deyil. Kriptovalyuta ticarəti yüksək risklidir. Öz araşdırmanızı edin.</p>
         </div>
     </footer>
 
@@ -130,6 +129,7 @@
         hamburger.addEventListener('click', () => {
             const expanded = hamburger.getAttribute('aria-expanded') === 'true';
             hamburger.setAttribute('aria-expanded', String(!expanded));
+            hamburger.classList.toggle('open');
             navMenu.classList.toggle('open');
         });
 
