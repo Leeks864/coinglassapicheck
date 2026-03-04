@@ -1951,7 +1951,7 @@ html, body {
   object-fit: contain;
   image-rendering: crisp-edges;
   transition: transform 0.4s ease;
-  display: block !important;
+  display: none;
 }
 
 .futures-coin-card:hover .futures-coin-logo {

@@ -12,16 +12,16 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <a href="main.html" class="navbar-logo">
+            <a href="/main" class="navbar-logo">
                 <img src="esfx.jpeg" alt="ESFX Logo">
             </a>
             
             <nav class="navbar-menu" id="navbarMenu">
-                <a href="main.html" class="navbar-link active">Ana Səhifə</a>
-                <a href="market.html" class="navbar-link">Bazar</a>
-                <a href="news.html" class="navbar-link">Xəbərlər</a>
-                <a href="videos.html" class="navbar-link">Videolar</a>
-                <a href="partners.html" class="navbar-link">Tərəfdaşlar</a>
+                <a href="/main" class="navbar-link active">Ana Səhifə</a>
+                <a href="/market" class="navbar-link">Bazar</a>
+                <a href="/news" class="navbar-link">Xəbərlər</a>
+                <a href="/videos" class="navbar-link">Videolar</a>
+                <a href="/partners" class="navbar-link">Tərəfdaşlar</a>
             </nav>
 
             <button class="navbar-hamburger" id="hamburger" aria-label="Menyu">
@@ -41,7 +41,7 @@
                     <p class="hero-sub">Qlobal bazar göstəriciləri, ETF axınları, və canlı qiymətlərlə daha dəqiq qərar verin.</p>
                     <div class="hero-ctas">
                         <a href="https://t.me/kriptoxeyal" class="btn" target="_blank">Telegram Kanalımız</a>
-                        <a href="partners.html" class="btn ghost">Tərəfdaşlarımız</a>
+                        <a href="/partners" class="btn ghost">Tərəfdaşlarımız</a>
                     </div>
                 </div>
             </div>
@@ -70,22 +70,22 @@
                     </div>
                 </div>
                 <div class="sections-grid">
-                    <a class="section-card" href="market.html">
+                    <a class="section-card" href="/market">
                         <span class="badge">Spot & Futures</span>
                         <h3>Bazar cədvəli</h3>
                         <p>Qlobal statistika, real vaxt qiymətlər və Coinglass dataları.</p>
                     </a>
-                    <a class="section-card" href="news.html">
+                    <a class="section-card" href="/news">
                         <span class="badge">Xəbərlər</span>
                         <h3>İnvestor xəbər lentimiz</h3>
                         <p>Makro, DeFi və futures xəbərləri hər 3 saatda yenilənir.</p>
                     </a>
-                    <a class="section-card" href="videos.html">
+                    <a class="section-card" href="/videos">
                         <span class="badge">YouTube</span>
                         <h3>YouTube kanalımız</h3>
                         <p>0-dan texniki analiz dərsləri, Canlı yayımlar və strategiyalar.</p>
                     </a>
-                    <a class="section-card" href="partners.html">
+                    <a class="section-card" href="/partners">
                         <span class="badge">Ekosistem</span>
                         <h3>Tərəfdaşlarımız</h3>
                         <p>Əməkdaşlıq etdiyimiz birjalar</p>
@@ -151,10 +151,8 @@
                 html += `
                     <div class="futures-coin-card">
                         <div class="futures-logo-wrapper">
-                            <img src="${coin.logo}" alt="${coin.symbol}" class="futures-coin-logo"
-                                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                                 style="display: none;">
+                            <img src="${coin.logo}" alt="${coin.symbol}" class="futures-coin-logo futures-coin-img" 
+                                 data-symbol="${coin.symbol}">
                             <span class="futures-coin-fallback">${coin.symbol.substring(0, 2)}</span>
                         </div>
                         <div class="futures-coin-info">
@@ -175,6 +173,21 @@
             // Refresh prices every 15 seconds to avoid rate limiting
             setInterval(fetchLivePrices, 15000);
         });
+
+        // Handle image loading for coin logos
+        document.addEventListener('load', (e) => {
+            if (e.target.classList.contains('futures-coin-img')) {
+                e.target.style.display = 'block';
+                e.target.nextElementSibling.style.display = 'none';
+            }
+        }, true);
+
+        document.addEventListener('error', (e) => {
+            if (e.target.classList.contains('futures-coin-img')) {
+                e.target.style.display = 'none';
+                e.target.nextElementSibling.style.display = 'block';
+            }
+        }, true);
 
         // Helper function to add delay
         function delay(ms) {

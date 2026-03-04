@@ -8,10 +8,100 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const API_BASE = 'https://open-api-v4.coinglass.com';
 const API_KEY = process.env.COINGLASS_API_KEY;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// ========== SECURITY MIDDLEWARE ==========
+
+// Restrict CORS to trusted origins only
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow localhost for development, restrict in production
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin) || NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+};
+
+// Security headers middleware
+const securityHeaders = (req, res, next) => {
+  // Prevent clickjacking
+  res.setHeader('X-Frame-Options', 'DENY');
+  // Prevent MIME type sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  // Enable XSS protection
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  // Referrer policy
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Content Security Policy
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://open-api-v4.coinglass.com;");
+  // Disable caching for sensitive data
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  // Hide server info
+  res.removeHeader('X-Powered-By');
+  res.setHeader('Server', 'ESFX');
+  next();
+};
+
+// Rate limiting middleware
+const requests = {};
+const rateLimitMiddleware = (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  
+  if (!requests[ip]) {
+    requests[ip] = [];
+  }
+  
+  // Remove requests older than 1 minute
+  requests[ip] = requests[ip].filter(time => now - time < 60000);
+  
+  // Allow 30 requests per minute (2 per second average)
+  if (requests[ip].length >= 30) {
+    return res.status(429).json({ 
+      success: false, 
+      error: 'Çox sürətli sorğu. Bir mikə sonra cəhd edin.' 
+    });
+  }
+  
+  requests[ip].push(now);
+  next();
+};
+
+// Input validation middleware
+const validateInput = (req, res, next) => {
+  // Sanitize request query and body
+  const sanitizeString = (str) => {
+    if (typeof str !== 'string') return str;
+    return str.replace(/[<>\"'&]/g, '');
+  };
+  
+  if (req.query) {
+    for (let key in req.query) {
+      req.query[key] = sanitizeString(req.query[key]);
+    }
+  }
+  
+  next();
+};
+
+// Middleware stack
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+app.use(rateLimitMiddleware);
+app.use(express.json({ limit: '10kb' })); // Limit payload size
+app.use(validateInput);
 app.use(express.static('public'));
 
 // Cache for reducing API calls
@@ -235,9 +325,8 @@ app.get('/api/endpoints', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    apiKey: API_KEY ? 'Configured' : 'Not configured',
-    baseUrl: API_BASE,
-    message: 'Server is running'
+    status: 'operational',
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -300,9 +389,29 @@ app.post('/api/test-all', async (req, res) => {
   }
 });
 
-// Serve main.html for root
+// Clean URL routing - serve pages without .html extension
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'main.html'));
+});
+
+app.get('/main', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
+});
+
+app.get('/market', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'market.html'));
+});
+
+app.get('/news', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'news.html'));
+});
+
+app.get('/videos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'videos.html'));
+});
+
+app.get('/partners', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'partners.html'));
 });
 
 // ========== PROXY ENDPOINTS ==========

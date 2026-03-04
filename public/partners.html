@@ -12,16 +12,16 @@
 <body>
     <header class="navbar">
         <div class="navbar-container">
-            <a href="main.html" class="navbar-logo">
+            <a href="/main" class="navbar-logo">
                 <img src="esfx.jpeg" alt="ESFX Logo">
             </a>
             
             <nav class="navbar-menu" id="navbarMenu">
-                <a href="main.html" class="navbar-link">Ana Səhifə</a>
-                <a href="market.html" class="navbar-link">Bazar</a>
-                <a href="news.html" class="navbar-link">Xəbərlər</a>
-                <a href="videos.html" class="navbar-link">Videolar</a>
-                <a href="partners.html" class="navbar-link active">Tərəfdaşlar</a>
+                <a href="/main" class="navbar-link">Ana Səhifə</a>
+                <a href="/market" class="navbar-link">Bazar</a>
+                <a href="/news" class="navbar-link">Xəbərlər</a>
+                <a href="/videos" class="navbar-link">Videolar</a>
+                <a href="/partners" class="navbar-link active">Tərəfdaşlar</a>
             </nav>
 
             <button class="navbar-hamburger" id="hamburger" aria-label="Menyu">
@@ -50,7 +50,7 @@
                         <img src="bitget.png" alt="Bitget" class="partner-simple-logo">
                         <h3>Bitget</h3>
                         <input type="text" class="referral-link-input" value="https://partner.bitget.fit/bg/37UJQS" id="bitget-ref" readonly>
-                        <button class="copy-btn" onclick="copyToClipboard('bitget-ref')">Kopyala</button>
+                        <button class="copy-btn" data-target="bitget-ref">Kopyala</button>
                     </div>
 
                     <!-- Weex -->
@@ -58,7 +58,7 @@
                         <img src="weex.png" alt="Weex" class="partner-simple-logo">
                         <h3>Weex</h3>
                         <input type="text" class="referral-link-input" value="https://weex.com/register?vipCode=aguj" id="weex-ref" readonly>
-                        <button class="copy-btn" onclick="copyToClipboard('weex-ref')">Kopyala</button>
+                        <button class="copy-btn" data-target="weex-ref">Kopyala</button>
                     </div>
 
                     <!-- MEXC -->
@@ -66,7 +66,7 @@
                         <img src="mexc.png" alt="MEXC" class="partner-simple-logo">
                         <h3>MEXC</h3>
                         <input type="text" class="referral-link-input" value="https://www.mexc.com/acquisition/custom-sign-up?shareCode=mexc-2kVHP" id="mexc-ref" readonly>
-                        <button class="copy-btn" onclick="copyToClipboard('mexc-ref')">Kopyala</button>
+                        <button class="copy-btn" data-target="mexc-ref">Kopyala</button>
                     </div>
 
                     <!-- XM -->
@@ -74,7 +74,7 @@
                         <img src="xm.jpg" alt="XM Crypto" class="partner-simple-logo">
                         <h3>XM Crypto</h3>
                         <input type="text" class="referral-link-input" value="-" id="xm-ref" readonly>
-                        <button class="copy-btn" onclick="copyToClipboard('xm-ref')">Kopyala</button>
+                        <button class="copy-btn" data-target="xm-ref">Kopyala</button>
                     </div>
 
                     <!-- OKX -->
@@ -82,7 +82,7 @@
                         <img src="okx.svg" alt="OKX" class="partner-simple-logo">
                         <h3>OKX</h3>
                         <input type="text" class="referral-link-input" value="https://okx.com/join/9450438" id="okx-ref" readonly>
-                        <button class="copy-btn" onclick="copyToClipboard('okx-ref')">Kopyala</button>
+                        <button class="copy-btn" data-target="okx-ref">Kopyala</button>
                     </div>
                 </div>
             </div>
@@ -118,19 +118,29 @@
         </div>
     </footer>
     <script>
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            element.select();
-            document.execCommand('copy');
-            
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = '✓ Kopyalandı';
-            
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2000);
-        }
+        // Secure copy to clipboard using event delegation
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('copy-btn')) {
+                const targetId = e.target.getAttribute('data-target');
+                if (targetId) {
+                    const element = document.getElementById(targetId);
+                    if (element) {
+                        // Use modern Clipboard API
+                        navigator.clipboard.writeText(element.value).then(() => {
+                            const button = e.target;
+                            const originalText = button.textContent;
+                            button.textContent = '✓ Kopyalandı';
+                            
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Copy failed:', err);
+                        });
+                    }
+                }
+            }
+        });
     </script>
 
     <script>
