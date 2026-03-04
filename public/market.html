@@ -15,18 +15,22 @@
             <a href="main.html" class="logo" aria-label="ESFX Trader">
                 <img src="esfx.jpeg" alt="ESFX Logo" class="logo-img">
             </a>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="main.html" class="nav-link">Ana Səhifə</a></li>
-                <li><a href="market.html" class="nav-link active">Bazar</a></li>
-                <li><a href="news.html" class="nav-link">Xəbərlər</a></li>
-                <li><a href="videos.html" class="nav-link">Videolar</a></li>
-                <li><a href="partners.html" class="nav-link">Tərəfdaşlar</a></li>
-            </ul>
-            <button class="hamburger" id="hamburger" aria-label="Menyu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <nav class="nav-wrapper">
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="main.html" class="nav-link">Ana Səhifə</a></li>
+                    <li><a href="market.html" class="nav-link active">Bazar</a></li>
+                    <li><a href="news.html" class="nav-link">Xəbərlər</a></li>
+                    <li><a href="videos.html" class="nav-link">Videolar</a></li>
+                    <li><a href="partners.html" class="nav-link">Tərəfdaşlar</a></li>
+                </ul>
+                <div class="nav-mobile-dropdown">
+                    <button class="nav-more-btn" id="navMoreBtn">Daha Çox ▼</button>
+                    <div class="dropdown-panel" id="dropdownPanel">
+                        <a href="videos.html" class="dropdown-item">Videolar</a>
+                        <a href="partners.html" class="dropdown-item">Tərəfdaşlar</a>
+                    </div>
+                </div>
+            </nav>
         </div>
     </header>
 
@@ -132,22 +136,28 @@
     </footer>
 
     <script>
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('navMenu');
-        hamburger.addEventListener('click', () => {
-            const expanded = hamburger.getAttribute('aria-expanded') === 'true';
-            hamburger.setAttribute('aria-expanded', String(!expanded));
-            hamburger.classList.toggle('open');
-            navMenu.classList.toggle('open');
+        // Mobile dropdown
+        const navMoreBtn = document.getElementById('navMoreBtn');
+        const dropdownPanel = document.getElementById('dropdownPanel');
+
+        navMoreBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownPanel?.classList.toggle('open');
         });
 
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-mobile-dropdown')) {
+                dropdownPanel?.classList.remove('open');
+            }
+        });
+
+        // Active link
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.forEach(item => item.classList.remove('active'));
                 link.classList.add('active');
-                navMenu.classList.remove('open');
-                hamburger.setAttribute('aria-expanded', 'false');
             });
         });
 
