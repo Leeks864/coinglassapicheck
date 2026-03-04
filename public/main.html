@@ -113,10 +113,10 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-social">
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <a href="https://www.youtube.com/channel/UC73NUms2MsMfUBXYpYwuYdg" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                     <img src="/youtube-icon.svg" alt="YouTube">
                 </a>
-                <a href="https://t.me" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                <a href="https://t.me/kriptoxeyal" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
                     <img src="/telegram-icon.svg" alt="Telegram">
                 </a>
             </div>
@@ -172,24 +172,44 @@
         window.addEventListener('load', () => {
             fetchFuturesCoins();
             fetchLivePrices();
-            // Refresh prices every 10 seconds
-            setInterval(fetchLivePrices, 10000);
+            // Refresh prices every 15 seconds to avoid rate limiting
+            setInterval(fetchLivePrices, 15000);
         });
 
+        // Helper function to add delay
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         async function fetchLivePrices() {
-            try {
-                const response = await fetch('/api/live-prices');
-                const data = await response.json();
-                
-                if (data.success && data.data && Array.isArray(data.data)) {
-                    displayLivePrices(data.data);
-                } else {
-                    throw new Error('Invalid response format');
+            let retries = 0;
+            const maxRetries = 2;
+            
+            const attempt = async () => {
+                try {
+                    const response = await fetch('/api/live-prices');
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.data && Array.isArray(data.data)) {
+                        displayLivePrices(data.data);
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Live prices fetch error:', error);
+                    document.getElementById('livePrices').innerHTML = `<div class="error-message">Qiymətlər yüklənə bilinmədi</div>`;
                 }
-            } catch (error) {
-                console.error('Live prices fetch error:', error);
-                document.getElementById('livePrices').innerHTML = `<div class="error-message">Qiymətlər yüklənə bilinmədi</div>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayLivePrices(prices) {

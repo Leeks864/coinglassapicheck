@@ -81,7 +81,7 @@
             <div class="container">
                 <div class="section-head">
                     <div>
-                        <h2>Grayscale Holdings</h2>
+                        <h2>Grayscale Saxlanmaları</h2>
                         <p class="section-sub">Grayscale kriptovalyutaları fon şəklində idarə edən və investorların ənənəvi bazarlar vasitəsi ilə kriptoya yatırım etməsini təmin edən şirkətdir.</p>
                     </div>
                 </div>
@@ -101,12 +101,12 @@
                     <table class="top-coins-table">
                         <thead>
                             <tr>
-                                <th>Rank</th>
-                                <th>Coin</th>
-                                <th>Price (USD)</th>
-                                <th>24h Change</th>
-                                <th>Market Cap</th>
-                                <th>24h Volume</th>
+                                <th>Sıra</th>
+                                <th>Kriptovalyuta</th>
+                                <th>Qiymət (USD)</th>
+                                <th>24 Saat Dəyişim</th>
+                                <th>Bazar Dəyəri</th>
+                                <th>24 Saat Həcmi</th>
                             </tr>
                         </thead>
                         <tbody id="topCoinsData"></tbody>
@@ -121,10 +121,10 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-social">
-                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <a href="https://www.youtube.com/channel/UC73NUms2MsMfUBXYpYwuYdg" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
                     <img src="/youtube-icon.svg" alt="YouTube">
                 </a>
-                <a href="https://t.me" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                <a href="https://t.me/kriptoxeyal" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
                     <img src="/telegram-icon.svg" alt="Telegram">
                 </a>
             </div>
@@ -134,32 +134,115 @@
     </footer>
 
     <script>
+        // Global variable to store BTC price
+        let currentBTCPrice = null;
+
+        // Format large numbers (adds M, B, T suffixes)
+        function formatLargeNumber(value) {
+            if (value >= 1000000000000) {
+                return (value / 1000000000000).toFixed(2) + 'T';
+            } else if (value >= 1000000000) {
+                return (value / 1000000000).toFixed(2) + 'B';
+            } else if (value >= 1000000) {
+                return (value / 1000000).toFixed(1) + 'M';
+            } else {
+                return value.toFixed(0);
+            }
+        }
+
+        // Helper function to delay execution
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         // Load all data when page loads
-        window.addEventListener('load', () => {
-            fetchLongShortRatios();
-            fetchBTCETFFlows();
-            fetchGrayscaleHoldings();
-            fetchLiquidationHistory();
-            fetchTopCoins();
-            fetchMarketIndicators();
+        window.addEventListener('load', async () => {
+            try {
+                await fetchLivePrices();
+                await delay(300);
+                
+                fetchLongShortRatios();
+                await delay(300);
+                
+                fetchBTCETFFlows();
+                await delay(300);
+                
+                fetchGrayscaleHoldings();
+                await delay(300);
+                
+                fetchLiquidationHistory();
+                await delay(300);
+                
+                fetchTopCoins();
+                await delay(300);
+                
+                fetchMarketIndicators();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
         });
+
+        // Fetch live prices (BTC price)
+        async function fetchLivePrices() {
+            let retries = 0;
+            const maxRetries = 2;
+            
+            const attempt = async () => {
+                try {
+                    const response = await fetch('/api/live-prices');
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.data && Array.isArray(data.data)) {
+                        const btc = data.data.find(p => p.symbol === 'BTC');
+                        if (btc) {
+                            currentBTCPrice = btc.price;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Live prices fetch error:', error);
+                }
+            };
+            
+            return attempt();
+        }
 
         async function fetchLongShortRatios() {
             const url = '/api/proxy/long-short';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayLongShortRatios(data.data || data);
+                } catch (error) {
+                    console.error('Long-Short Ratio fetch error:', error);
+                    document.getElementById('longShortData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
                 }
-                
-                const data = await response.json();
-                displayLongShortRatios(data.data || data);
-            } catch (error) {
-                console.error('Long-Short Ratio fetch error:', error);
-                document.getElementById('longShortData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayLongShortRatios(data) {
@@ -220,20 +303,33 @@
 
         async function fetchBTCETFFlows() {
             const url = '/api/proxy/btc-etf-flow';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayBTCETFFlows(data);
+                } catch (error) {
+                    console.error('BTC ETF flow fetch error:', error);
+                    document.getElementById('etfFlowsData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
                 }
-                
-                const data = await response.json();
-                displayBTCETFFlows(data);
-            } catch (error) {
-                console.error('BTC ETF flow fetch error:', error);
-                document.getElementById('etfFlowsData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayBTCETFFlows(data) {
@@ -245,23 +341,38 @@
             const flows = data.data;
             const summary = data.summary || {};
             
+            // Get flow from 3 days ago (or 3rd oldest available)
+            let threeDAysAgoFlow = 0;
+            if (flows && flows.length >= 3) {
+                // flows is sorted newest first, so 3rd item from start is 3 days ago
+                // Or if sorted oldest first, 3rd from end is 3 days ago
+                // Let's check by getting the one that's 3 positions from the latest
+                const targetIndex = flows.length - 3;
+                if (targetIndex >= 0) {
+                    threeDAysAgoFlow = flows[targetIndex]?.flow_usd || 0;
+                }
+            } else if (flows && flows.length > 0) {
+                // Fallback to oldest available
+                threeDAysAgoFlow = flows[0]?.flow_usd || 0;
+            }
+            
             let html = `
                 <div class="etf-summary-cards">
                     <div class="summary-card">
                         <div class="summary-label">7 Günlük Toplam Axın</div>
                         <div class="summary-value ${summary.total_7d_flow >= 0 ? 'positive' : 'negative'}">
-                            $${(summary.total_7d_flow / 1000000).toFixed(1)}M
+                            $${formatLargeNumber(summary.total_7d_flow)}
                         </div>
                     </div>
                     <div class="summary-card">
                         <div class="summary-label">Son Axın</div>
-                        <div class="summary-value ${summary.last_flow >= 0 ? 'positive' : 'negative'}">
-                            $${(summary.last_flow / 1000000).toFixed(1)}M
+                        <div class="summary-value ${threeDAysAgoFlow >= 0 ? 'positive' : 'negative'}">
+                            $${formatLargeNumber(threeDAysAgoFlow)}
                         </div>
                     </div>
                     <div class="summary-card">
                         <div class="summary-label">BTC Qiyməti</div>
-                        <div class="summary-value">$${summary.current_price?.toLocaleString('en-US', {maximumFractionDigits: 2}) || 'N/A'}</div>
+                        <div class="summary-value">$${currentBTCPrice ? currentBTCPrice.toLocaleString('en-US', {maximumFractionDigits: 2}) : 'N/A'}</div>
                     </div>
                 </div>
                 <div class="etf-flows-list">
@@ -270,14 +381,14 @@
             
             flows.forEach((flow, idx) => {
                 const isPositive = flow.flow_usd >= 0;
-                const flowAmount = (flow.flow_usd / 1000000).toFixed(1);
+                const flowAmount = formatLargeNumber(Math.abs(flow.flow_usd));
                 
                 html += `
                     <div class="flow-item ${isPositive ? 'inflow' : 'outflow'}">
                         <div class="flow-date">${flow.date}</div>
                         <div class="flow-data">
                             <div class="flow-amount ${isPositive ? 'positive' : 'negative'}">
-                                ${isPositive ? '+' : ''}$${flowAmount}M
+                                ${isPositive ? '+' : '-'}$${flowAmount}
                             </div>
                             <div class="flow-price">$${flow.price_usd?.toLocaleString('en-US', {maximumFractionDigits: 2})}</div>
                         </div>`;
@@ -285,12 +396,12 @@
                 if (flow.major_etfs && flow.major_etfs.length > 0) {
                     html += `<div class="major-etfs">`;
                     flow.major_etfs.forEach(etf => {
-                        const etfFlow = (etf.flow / 1000000).toFixed(1);
+                        const etfFlow = formatLargeNumber(Math.abs(etf.flow));
                         html += `
                             <div class="etf-badge" title="Ticker: ${etf.ticker}">
                                 <span class="etf-ticker">${etf.ticker}</span>
                                 <span class="etf-flow ${etf.flow >= 0 ? 'positive' : 'negative'}">
-                                    ${etf.flow >= 0 ? '+' : ''}$${etfFlow}M
+                                    ${etf.flow >= 0 ? '+' : '-'}$${etfFlow}
                                 </span>
                             </div>`;
                     });
@@ -306,20 +417,33 @@
 
         async function fetchGrayscaleHoldings() {
             const url = '/api/proxy/grayscale-holdings';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayGrayscaleHoldings(data.data || []);
+                } catch (error) {
+                    console.error('Grayscale holdings fetch error:', error);
+                    document.getElementById('grayscaleTableBody').innerHTML = `<tr><td colspan="4" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
                 }
-                
-                const data = await response.json();
-                displayGrayscaleHoldings(data.data || []);
-            } catch (error) {
-                console.error('Grayscale holdings fetch error:', error);
-                document.getElementById('grayscaleTableBody').innerHTML = `<tr><td colspan="4" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayGrayscaleHoldings(holdings) {
@@ -337,7 +461,7 @@
                             <strong>${holding.symbol}</strong>
                         </td>
                         <td class="holding-value">
-                            $${(holding.holdings_usd / 1000000).toFixed(1)}M
+                            $${formatLargeNumber(holding.holdings_usd)}
                         </td>
                         <td class="holding-premium ${premiumClass}">
                             ${holding.premium_rate >= 0 ? '+' : ''}${holding.premium_rate.toFixed(2)}%
@@ -358,20 +482,33 @@
 
         async function fetchLiquidationHistory() {
             const url = '/api/proxy/liquidation-history';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayLiquidationHistory(data);
+                } catch (error) {
+                    console.error('Liquidation history fetch error:', error);
+                    document.getElementById('liquidationData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
                 }
-                
-                const data = await response.json();
-                displayLiquidationHistory(data);
-            } catch (error) {
-                console.error('Liquidation history fetch error:', error);
-                document.getElementById('liquidationData').innerHTML = `<div class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</div>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayLiquidationHistory(data) {
@@ -389,20 +526,20 @@
             let html = `
                 <div class="liquidation-summary-cards">
                     <div class="liq-card long-card">
-                        <div class="liq-label">7D Long Liquidations</div>
-                        <div class="liq-value">$${(summary.total_7d_long / 1000000).toFixed(1)}M</div>
+                        <div class="liq-label">7 Günlük Long Likvidasiyalar</div>
+                        <div class="liq-value">$${formatLargeNumber(summary.total_7d_long)}</div>
                     </div>
                     <div class="liq-card short-card">
-                        <div class="liq-label">7D Short Liquidations</div>
-                        <div class="liq-value">$${(summary.total_7d_short / 1000000).toFixed(1)}M</div>
+                        <div class="liq-label">7 Günlük Short Likvidasiyalar</div>
+                        <div class="liq-value">$${formatLargeNumber(summary.total_7d_short)}</div>
                     </div>
                     <div class="liq-card total-card">
-                        <div class="liq-label">Total 7D Liquidations</div>
-                        <div class="liq-value">$${(summary.total_7d_liquidation / 1000000).toFixed(1)}M</div>
+                        <div class="liq-label">Cəmi 7 Günlük Likvidasiyalar</div>
+                        <div class="liq-value">$${formatLargeNumber(summary.total_7d_liquidation)}</div>
                     </div>
                 </div>
                 <div class="liquidation-chart">
-                    <h3>Last 7 Days Liquidation Volume</h3>
+                    <h3>Son 7 Günün Likvidasiya Həcmi</h3>
                     <div class="liq-bars">`;
 
             liquidations.forEach(liq => {
@@ -413,12 +550,12 @@
                     <div class="liq-bar-group">
                         <div class="liq-date">${liq.date}</div>
                         <div class="liq-bar-container">
-                            <div class="liq-bar long-bar" style="width: ${longPercent}%" title="Long: $${(liq.long_usd / 1000000).toFixed(1)}M"></div>
-                            <div class="liq-bar short-bar" style="width: ${shortPercent}%" title="Short: $${(liq.short_usd / 1000000).toFixed(1)}M"></div>
+                            <div class="liq-bar long-bar" style="width: ${longPercent}%" title="Long: $${formatLargeNumber(liq.long_usd)}"></div>
+                            <div class="liq-bar short-bar" style="width: ${shortPercent}%" title="Short: $${formatLargeNumber(liq.short_usd)}"></div>
                         </div>
                         <div class="liq-amounts">
-                            <span class="long-amount">$${(liq.long_usd / 1000000).toFixed(1)}M</span>
-                            <span class="short-amount">$${(liq.short_usd / 1000000).toFixed(1)}M</span>
+                            <span class="long-amount">$${formatLargeNumber(liq.long_usd)}</span>
+                            <span class="short-amount">$${formatLargeNumber(liq.short_usd)}</span>
                         </div>
                     </div>`;
             });
@@ -430,20 +567,33 @@
         // Top Coins functions
         async function fetchTopCoins() {
             const url = '/api/proxy/top-coins';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    
+                    if (response.status === 429 && retries < maxRetries) {
+                        // Rate limited, retry after delay
+                        retries++;
+                        await delay(1000 * (retries * 2));
+                        return attempt();
+                    }
+                    
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayTopCoins(data);
+                } catch (error) {
+                    console.error('Top coins fetch error:', error);
+                    document.getElementById('topCoinsData').innerHTML = `<tr><td colspan="6" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
                 }
-                
-                const data = await response.json();
-                displayTopCoins(data);
-            } catch (error) {
-                console.error('Top coins fetch error:', error);
-                document.getElementById('topCoinsData').innerHTML = `<tr><td colspan="6" class="error-message">Məlumat yüklənmə uğursuz oldu: ${error.message}</td></tr>`;
-            }
+            };
+            
+            return attempt();
         }
 
         function displayTopCoins(data) {
@@ -458,12 +608,8 @@
             coins.forEach(coin => {
                 const changeClass = coin.change_24h >= 0 ? 'change-positive' : 'change-negative';
                 const changeSign = coin.change_24h >= 0 ? '+' : '';
-                const marketCapDisplay = coin.market_cap > 1000000000 
-                    ? `$${(coin.market_cap / 1000000000).toFixed(1)}B` 
-                    : `$${(coin.market_cap / 1000000).toFixed(1)}M`;
-                const volumeDisplay = coin.volume_24h > 1000000000 
-                    ? `$${(coin.volume_24h / 1000000000).toFixed(1)}B` 
-                    : `$${(coin.volume_24h / 1000000).toFixed(1)}M`;
+                const marketCapDisplay = `$${formatLargeNumber(coin.market_cap)}`;
+                const volumeDisplay = `$${formatLargeNumber(coin.volume_24h)}`;
 
                 html += `
                     <tr>
@@ -472,7 +618,7 @@
                             ${coin.image ? `<img src="${coin.image}" alt="${coin.name}" class="coin-image">` : '<div class="coin-image"></div>'}
                             <div>
                                 <div class="coin-symbol">${coin.symbol}</div>
-                                <div style="font-size: 0.85rem; color: var(--gray-3);">${coin.name}</div>
+                                <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.65);">${coin.name}</div>
                             </div>
                         </td>
                         <td class="price-cell">$${coin.price.toFixed(2)}</td>
@@ -488,16 +634,30 @@
         // Market Indicators functions
         async function fetchMarketIndicators() {
             const url = '/api/proxy/market-indicators';
+            let retries = 0;
+            const maxRetries = 2;
             
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                
-                const data = await response.json();
-                displayMarketIndicators(data.data || {});
-            } catch (error) {
-                console.error('Market indicators fetch error:', error);
-            }
+            const attempt = async () => {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        if (response.status === 429 && retries < maxRetries) {
+                            // Rate limited, retry after delay
+                            retries++;
+                            await delay(1000 * (retries * 2));
+                            return attempt();
+                        }
+                        throw new Error(`API Error: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    displayMarketIndicators(data.data || {});
+                } catch (error) {
+                    console.error('Market indicators fetch error:', error);
+                }
+            };
+            
+            return attempt();
         }
 
         function displayMarketIndicators(indicators) {

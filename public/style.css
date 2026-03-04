@@ -762,7 +762,7 @@ html, body {
 }
 
 .stat-label {
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     font-size: 0.9rem;
     margin-bottom: 12px;
 }
@@ -816,7 +816,7 @@ html, body {
 
 .flow-date {
     font-size: 0.85rem;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     margin: 0;
 }
 
@@ -997,7 +997,7 @@ html, body {
 }
 
 .stat-label {
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.55);
     font-size: 0.98rem;
     font-weight: 500;
     margin-bottom: 2px;
@@ -1227,7 +1227,7 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     font-weight: 600;
 }
 
@@ -1266,7 +1266,7 @@ html, body {
 
 .partner-note {
     font-size: 0.95rem;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     margin-top: 4px;
 }
 
@@ -1309,7 +1309,7 @@ html, body {
 
 .news-feature-card p {
     margin: 0;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
 }
 
 .feature-meta {
@@ -1364,7 +1364,7 @@ html, body {
 }
 
 .news-desc {
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     font-size: 1rem;
     line-height: 1.5;
 }
@@ -1374,7 +1374,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     font-size: 0.95rem;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.55);
     gap: 12px;
 }
 
@@ -1539,7 +1539,7 @@ html, body {
 }
 
 .youtube-subscribe-cta p {
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     font-size: 1.1rem;
     margin: 0;
     max-width: 600px;
@@ -1557,7 +1557,7 @@ html, body {
 
 .section-sub {
     margin: 8px 0 0 0;
-    color: var(--gray-3);
+    color: rgba(255, 255, 255, 0.65);
     max-width: 720px;
 }
 
@@ -2331,6 +2331,29 @@ html, body {
   background: linear-gradient(90deg, #627eea, transparent);
 }
 
+.price-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.price-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+}
+
+.price-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .price-header {
   display: flex;
   justify-content: space-between;
@@ -2395,7 +2418,7 @@ html, body {
 
 .stat-label {
   font-size: 0.85rem;
-  color: var(--gray-3);
+  color: rgba(255, 255, 255, 0.55);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -2470,7 +2493,7 @@ html, body {
   padding: 3px 6px;
   border-radius: 3px;
   font-size: 0.75rem;
-  color: var(--gray-3);
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 500;
 }
 
@@ -2802,7 +2825,7 @@ html, body {
 .market-cap-cell,
 .volume-cell {
   font-size: 0.85rem;
-  color: var(--gray-3);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 @media (max-width: 768px) {
@@ -2867,7 +2890,7 @@ html, body {
 
 .indicator-label {
   font-size: 0.8rem;
-  color: var(--gray-3);
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -2930,7 +2953,7 @@ html, body {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--gray-3);
+  color: rgba(255, 255, 255, 0.65);
   font-size: 1.1rem;
 }
 
