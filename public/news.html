@@ -9,31 +9,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header class="navbar">
-        <div class="container nav-container">
-            <a href="main.html" class="logo" aria-label="ESFX Trader">
-                <img src="esfx.jpeg" alt="ESFX Logo" class="logo-img">
+<body>    <header class="navbar">
+        <div class="navbar-container">
+            <a href="main.html" class="navbar-logo">
+                <img src="esfx.jpeg" alt="ESFX Logo">
             </a>
-            <nav class="nav-wrapper">
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="main.html" class="nav-link">Ana Səhifə</a></li>
-                    <li><a href="market.html" class="nav-link">Bazar</a></li>
-                    <li><a href="news.html" class="nav-link active">Xəbərlər</a></li>
-                    <li><a href="videos.html" class="nav-link">Videolar</a></li>
-                    <li><a href="partners.html" class="nav-link">Tərəfdaşlar</a></li>
-                </ul>
-                <div class="nav-mobile-dropdown">
-                    <button class="nav-more-btn" id="navMoreBtn">Daha Çox ▼</button>
-                    <div class="dropdown-panel" id="dropdownPanel">
-                        <a href="videos.html" class="dropdown-item">Videolar</a>
-                        <a href="partners.html" class="dropdown-item">Tərəfdaşlar</a>
-                    </div>
-                </div>
+            
+            <nav class="navbar-menu" id="navbarMenu">
+                <a href="main.html" class="navbar-link">Ana Səhifə</a>
+                <a href="market.html" class="navbar-link">Bazar</a>
+                <a href="news.html" class="navbar-link active">Xəbərlər</a>
+                <a href="videos.html" class="navbar-link">Videolar</a>
+                <a href="partners.html" class="navbar-link">Tərəfdaşlar</a>
             </nav>
+
+            <button class="navbar-hamburger" id="hamburger" aria-label="Menyu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
-
     <main>
         <section class="hero">
             <div class="container">
@@ -84,31 +80,6 @@
     </footer>
 
     <script>
-        // Mobile dropdown
-        const navMoreBtn = document.getElementById('navMoreBtn');
-        const dropdownPanel = document.getElementById('dropdownPanel');
-
-        navMoreBtn?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownPanel?.classList.toggle('open');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.nav-mobile-dropdown')) {
-                dropdownPanel?.classList.remove('open');
-            }
-        });
-
-        // Active link
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.forEach(item => item.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
-
         // Fetch crypto news and display dynamically
         async function loadCryptoNews() {
             try {
@@ -168,6 +139,50 @@
 
         // Load news when page loads
         document.addEventListener('DOMContentLoaded', loadCryptoNews);
+    </script>
+
+    <script>
+        // ===== NAVBAR FUNCTIONALITY =====
+        const hamburger = document.getElementById('hamburger');
+        const navbarMenu = document.getElementById('navbarMenu');
+        const navbarLinks = document.querySelectorAll('.navbar-link');
+
+        // Toggle mobile menu
+        hamburger?.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navbarMenu.classList.toggle('active');
+        });
+
+        // Close menu when link is clicked
+        navbarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navbarMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.navbar')) {
+                hamburger.classList.remove('active');
+                navbarMenu.classList.remove('active');
+            }
+        });
+
+        // Update active link on page load
+        function updateActiveLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'news.html';
+            navbarLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPage) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', updateActiveLink);
+        window.addEventListener('load', updateActiveLink);
     </script>
 </body>
 </html>
