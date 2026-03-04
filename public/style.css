@@ -124,7 +124,6 @@
 
 @media (max-width: 768px) {
     .nav-menu {
-        display: none;
         position: fixed;
         top: 52px;
         left: 0;
@@ -137,15 +136,15 @@
         z-index: 200;
         overflow-y: auto;
         opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
+        pointer-events: none;
+        transform: translateY(-100%);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
     }
 
     .nav-menu.open {
-        display: flex;
         opacity: 1;
-        visibility: visible;
+        pointer-events: auto;
         transform: translateY(0);
     }
 
