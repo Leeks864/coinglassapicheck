@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>    <header class="navbar">
+<body>
+    <header class="navbar">
         <div class="navbar-container">
             <a href="/main" class="navbar-logo">
                 <img src="esfx.jpeg" alt="ESFX Logo">
@@ -30,6 +31,7 @@
             </button>
         </div>
     </header>
+
     <main>
         <section class="hero">
             <div class="container">
@@ -80,80 +82,103 @@
     </footer>
 
     <script>
-        // Fetch crypto news and display dynamically
-        async function loadCryptoNews() {
-            try {
-                const response = await fetch('/api/crypto-news');
-                const result = await response.json();
-
-                if (result.success && result.data && result.data.length > 0) {
-                    const newsData = result.data;
-
-                    // Populate featured news (first 3 articles)
-                    const featuredNews = newsData.slice(0, 3);
-                    const newsFeatureGrid = document.getElementById('newsFeatureGrid');
-                    newsFeatureGrid.innerHTML = '';
-
-                    featuredNews.forEach(article => {
-                        const articleEl = document.createElement('article');
-                        articleEl.className = 'news-feature-card';
-                        
-                        const tagsHTML = article.tags.map(tag => `<span class="badge">${tag}</span>`).join('');
-                        const dateObj = new Date(article.date);
-                        const dateStr = dateObj.toLocaleDateString('az-AZ', { month: 'short', day: 'numeric' });
-
-                        articleEl.innerHTML = `
-                            <p class="feature-meta">${tagsHTML}</p>
-                            <h3>${article.title}</h3>
-                            <p>${article.description}</p>
-                        `;
-                        newsFeatureGrid.appendChild(articleEl);
-                    });
-
-                    // Populate all news (full list)
-                    const newsList = document.getElementById('newsList');
-                    newsList.innerHTML = '';
-
-                    newsData.forEach(article => {
-                        const articleEl = document.createElement('article');
-                        articleEl.className = 'news-card';
-                        
-                        const dateObj = new Date(article.date);
-                        const dateStr = dateObj.toLocaleDateString('az-AZ', { month: 'short', day: 'numeric' });
-
-                        articleEl.innerHTML = `
-                            <h3 class="news-title">${article.title}</h3>
-                            <p class="news-desc">${article.description}</p>
-                            <div class="news-meta">
-                                <span>${dateStr}</span>
-                                <span class="news-source">${article.source}</span>
-                            </div>
-                        `;
-                        newsList.appendChild(articleEl);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading crypto news:', error);
+        const staticNews = [
+            {
+                id: 1,
+                title: 'BTC spot ETF-lərinə son 7 günü ərzində 5.2 milyard dollar axını başladı',
+                description: 'Böyük investors kurumsal ETF-lərə tədricən baxış artırdı, BTC fiyatı 72 min dollardan yuxarı stabilləşdi.',
+                category: 'Xəbər',
+                date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                tags: ['BTC', 'ETF', 'Institusional'],
+                source: 'CoinGlass'
+            },
+            {
+                id: 2,
+                title: 'Ethereum gas xərcləri Proto-danksharding yeniləməsi ilə 25% aşağı düşdü',
+                description: 'Layer 2 həll yollarında txn xərcləri rekor aşağılara enib, Arbitrum və Optimism aktivitəsi artdı.',
+                category: 'Xəbər',
+                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                tags: ['ETH', 'L2'],
+                source: 'CoinGecko'
+            },
+            {
+                id: 3,
+                title: 'Solana TVL tarixən 10.5 milyard dollara çatdı',
+                description: 'Likvid staking və DeFi protokolları Solana şəbəkəsində böyük axın qeydə alındı.',
+                category: 'Xəbər',
+                date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                tags: ['SOL', 'DeFi'],
+                source: 'DefiLlama'
             }
+        ];
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
 
-        // Load news when page loads
+        function loadCryptoNews() {
+            const newsData = staticNews;
+            const featuredNews = newsData.slice(0, 3);
+            const newsFeatureGrid = document.getElementById('newsFeatureGrid');
+            newsFeatureGrid.innerHTML = '';
+
+            featuredNews.forEach(article => {
+                const articleEl = document.createElement('article');
+                articleEl.className = 'news-feature-card';
+                
+                const dateObj = new Date(article.date);
+                const dateStr = dateObj.toLocaleDateString('az-AZ', { month: 'short', day: 'numeric' });
+
+                articleEl.innerHTML = `
+                    <p class="feature-meta"><span class="badge">${dateStr}</span></p>
+                    <h3>${escapeHtml(article.title)}</h3>
+                    <p>${escapeHtml(article.description)}</p>
+                `;
+                newsFeatureGrid.appendChild(articleEl);
+            });
+
+            const newsList = document.getElementById('newsList');
+            newsList.innerHTML = '';
+
+            newsData.forEach(article => {
+                const articleEl = document.createElement('article');
+                articleEl.className = 'news-card';
+                
+                const dateObj = new Date(article.date);
+                const dateStr = dateObj.toLocaleDateString('az-AZ', { month: 'short', day: 'numeric' });
+
+                articleEl.innerHTML = `
+                    <h3 class="news-title">${escapeHtml(article.title)}</h3>
+                    <p class="news-desc">${escapeHtml(article.description)}</p>
+                    <div class="news-meta">
+                        <span>${dateStr}</span>
+                        ${article.source ? `<span class="news-source">${escapeHtml(article.source)}</span>` : ''}
+                    </div>
+                `;
+                newsList.appendChild(articleEl);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', loadCryptoNews);
     </script>
 
     <script>
-        // ===== NAVBAR FUNCTIONALITY =====
         const hamburger = document.getElementById('hamburger');
         const navbarMenu = document.getElementById('navbarMenu');
         const navbarLinks = document.querySelectorAll('.navbar-link');
 
-        // Toggle mobile menu
         hamburger?.addEventListener('click', () => {
             hamburger.classList.toggle('active');
             navbarMenu.classList.toggle('active');
         });
 
-        // Close menu when link is clicked
         navbarLinks.forEach(link => {
             link.addEventListener('click', () => {
                 hamburger.classList.remove('active');
@@ -161,7 +186,6 @@
             });
         });
 
-        // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.navbar')) {
                 hamburger.classList.remove('active');
@@ -169,18 +193,16 @@
             }
         });
 
-        // Update active link on page load
         function updateActiveLink() {
-            const currentPage = window.location.pathname.split('/').pop() || 'news.html';
+            const currentPage = window.location.pathname.split('/').pop() || 'news';
             navbarLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === currentPage) {
+                if (link.getAttribute('href').includes(currentPage) || (currentPage === '' && link.getAttribute('href') === '/news')) {
                     link.classList.add('active');
                 }
             });
         }
 
-        // Run on page load
         document.addEventListener('DOMContentLoaded', updateActiveLink);
         window.addEventListener('load', updateActiveLink);
     </script>
